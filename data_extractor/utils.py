@@ -12,16 +12,13 @@ def fuzzy_merge(df_left, df_right, key_left, key_right, threshold=84, limit=1):
     limit: the amount of matches that will get returned, these are sorted high to low
     """
     s = df_right.loc[:, key_right].tolist()
-
     m = df_left.loc[:, key_left].apply(lambda x: process.extract(x, s, limit=limit))
-    df_left.loc[:, "matches"] = m
-
-    m2 = df_left.loc[:, "matches"].apply(
+    new_df_left = df_left.assign(matches=m)
+    m2 = new_df_left.loc[:, "matches"].apply(
         lambda x: ", ".join([i[0] for i in x if i[1] >= threshold])
     )
-
-    df_left.loc[:, "matches"] = m2
-    return df_left
+    new_df_left.loc[:, "matches"] = m2
+    return new_df_left
 
 
 def nobel_laureates_dataframe(df_left, df_right):
